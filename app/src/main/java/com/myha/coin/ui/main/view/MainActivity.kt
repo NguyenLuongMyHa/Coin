@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.myha.coin.R
 import com.myha.coin.data.api.ApiHelper
@@ -14,6 +15,7 @@ import com.myha.coin.ui.main.viewmodel.MainViewModel
 import com.myha.coin.utils.Status
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.myha.coin.data.model.Coin
 import com.myha.coin.ui.main.adapter.MainAdapter
 import kotlinx.android.synthetic.main.activity_main.*
@@ -33,10 +35,10 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun setupViewModel() {
-        viewModel = ViewModelProviders.of(
+        viewModel = ViewModelProvider(
             this,
             ViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
-        ).get(MainViewModel::class.java)
+        )[MainViewModel::class.java]
     }
 
     private fun setupUI() {
@@ -58,7 +60,7 @@ class MainActivity : AppCompatActivity() {
                     Status.SUCCESS -> {
                         recyclerView.visibility = View.VISIBLE
                         progressBar.visibility = View.GONE
-                        resource.data?.let { coin -> retrieveList(coin) }
+                        resource.data?.let { res -> retrieveList(res.data.coins) }
                     }
                     Status.ERROR -> {
                         recyclerView.visibility = View.VISIBLE

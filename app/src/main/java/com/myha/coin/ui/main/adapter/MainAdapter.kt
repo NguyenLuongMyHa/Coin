@@ -1,5 +1,8 @@
 package com.myha.coin.ui.main.adapter
 
+import android.R.attr.fragment
+import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,23 +12,39 @@ import com.myha.coin.R
 import com.myha.coin.data.model.Coin
 import kotlinx.android.synthetic.main.item_coin.view.*
 
+
 class MainAdapter(private val coins: ArrayList<Coin>) : RecyclerView.Adapter<MainAdapter.DataViewHolder>() {
 
     class DataViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bind(coin: Coin) {
+        fun bind(coin: Coin?) {
             itemView.apply {
-                textViewUserName.text = coin.name
-                textViewUserEmail.text = coin.description
-                Glide.with(imageViewAvatar.context)
-                    .load(coin.iconUrl)
-                    .into(imageViewAvatar)
+                if (coin != null) {
+                    tv_coin_name.text = coin.name
+                    tv_coin_price.text = coin.price?.toString()
+                    tv_coin_symbol.text = coin.symbol
+                    Glide.with(itemView.context)
+                        .load(coin.iconUrl)
+                        .override(60,60)
+                        .centerCrop()
+                        .into(itemView.img_coin)
+                    tv_base_symbol.text = "USD"
+                }
+
             }
+
         }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataViewHolder =
-        DataViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.activity_main, parent, false))
+        DataViewHolder(
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.item_coin,
+                parent,
+                false
+            )
+        )
 
     override fun getItemCount(): Int = coins.size
 
