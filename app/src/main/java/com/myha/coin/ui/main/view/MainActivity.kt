@@ -2,6 +2,7 @@ package com.myha.coin.ui.main.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.Observer
@@ -15,6 +16,7 @@ import com.myha.coin.ui.main.viewmodel.MainViewModel
 import com.myha.coin.utils.Status
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.myha.coin.data.db.CoinDatabase
 import com.myha.coin.data.model.Coin
 import com.myha.coin.ui.main.adapter.MainAdapter
 import kotlinx.android.synthetic.main.activity_main.*
@@ -29,14 +31,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setupViewModel()
         setupUI()
-        setupObservers()
+        getCoinsFromLocal()
     }
 
 
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
             this,
-            ViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
+            ViewModelFactory(ApiHelper(RetrofitBuilder.apiService), CoinDatabase.getInstance(this))
         )[MainViewModel::class.java]
     }
 
@@ -52,19 +54,51 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
     }
 
-    private fun setupObservers() {
+    private fun getCoinsFromLocal() {
+        viewModel.getCoinsLocal().observe(this, {
+            it?.let {
+                resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        recyclerView.visibility = View.VISIBLE
+                        progressBar.visibility = View.GONE
+                        Toast.makeText(this, "Get Data From Room Success", Toast.LENGTH_LONG).show()
+                        resource.data?.let { res -> retrieveList(res) }
+                    }
+                    Status.ERROR -> {
+                        recyclerView.visibility = View.VISIBLE
+                        progressBar.visibility = View.GONE
+                        Toast.makeText(this, "Get Data From Room Fail", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, "Get Data From NetWork", Toast.LENGTH_LONG).show()
+
+                        getCoinsFromNetwork()
+
+                    }
+                    Status.LOADING -> {
+                        progressBar.visibility = View.VISIBLE
+                        recyclerView.visibility = View.GONE
+                    }
+                }
+            }
+        })
+
+    }
+
+    private fun getCoinsFromNetwork() {
         viewModel.getCoins().observe(this, Observer {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
                         recyclerView.visibility = View.VISIBLE
                         progressBar.visibility = View.GONE
-                        resource.data?.let { res -> retrieveList(res.data.coins) }
+                        Toast.makeText(this, "Get Data From Network Success", Toast.LENGTH_LONG).show()
+                        resource.data?.let { res -> retrieveListFromNetwork(res.data.coins) }
                     }
                     Status.ERROR -> {
                         recyclerView.visibility = View.VISIBLE
                         progressBar.visibility = View.GONE
                         Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                        Log.e("MYHA", it.message.toString())
                     }
                     Status.LOADING -> {
                         progressBar.visibility = View.VISIBLE
@@ -74,11 +108,31 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
-
     private fun retrieveList(coins: List<Coin>) {
-        adapter.apply {
-            addCoins(coins)
-            notifyDataSetChanged()
+        if(coins.size == 0)
+            getCoinsFromNetwork()
+        else
+        {
+            adapter.apply {
+                addCoins(coins)
+                notifyDataSetChanged()
+            }
         }
+    }
+
+    private fun retrieveListFromNetwork(coins: List<Coin>) {
+        viewModel.insertCoinsLocal(coins).observe(this, Observer {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        Toast.makeText(this, "Get Coins Data From Network Success, Save Room", Toast.LENGTH_LONG).show()
+                        getCoinsFromLocal()
+                    }
+                    Status.ERROR -> {
+                        Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        })
     }
 }
