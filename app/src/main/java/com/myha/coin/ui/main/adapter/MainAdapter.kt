@@ -1,41 +1,23 @@
 package com.myha.coin.ui.main.adapter
 
-import android.R.attr.fragment
-import android.graphics.Color
-import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 import com.myha.coin.R
 import com.myha.coin.data.model.Coin
+import com.myha.coin.ui.main.view.CoinDetailFragment
 import kotlinx.android.synthetic.main.item_coin.view.*
 
 
 class MainAdapter(private val coins: ArrayList<Coin>) : RecyclerView.Adapter<MainAdapter.DataViewHolder>() {
-
-    class DataViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-        fun bind(coin: Coin?) {
-            itemView.apply {
-                if (coin != null) {
-                    tv_coin_name.text = coin.name
-                    tv_coin_price.text = coin.price?.toString()
-                    tv_coin_symbol.text = coin.symbol
-                    Glide.with(itemView.context)
-                        .load(coin.iconUrl)
-                        .override(60,60)
-                        .centerCrop()
-                        .into(itemView.img_coin)
-                    tv_base_symbol.text = "USD"
-                }
-
-            }
-
-        }
-
-    }
+    lateinit var mItemCLicked: ItemCLickedListener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataViewHolder =
         DataViewHolder(
@@ -50,6 +32,11 @@ class MainAdapter(private val coins: ArrayList<Coin>) : RecyclerView.Adapter<Mai
 
     override fun onBindViewHolder(holder: DataViewHolder, position: Int) {
         holder.bind(coins[position])
+        holder.itemView.setOnClickListener {
+            mItemCLicked.let {
+                mItemCLicked.onItemClicked(coins[position])
+            }
+        }
     }
 
     fun addCoins(coins: List<Coin>) {
@@ -57,6 +44,31 @@ class MainAdapter(private val coins: ArrayList<Coin>) : RecyclerView.Adapter<Mai
             clear()
             addAll(coins)
         }
+    }
 
+    class DataViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        fun bind(coin: Coin?) {
+
+            GlideToVectorYou.init().with(itemView.context).load(
+                Uri.parse(coin?.iconUrl),
+                itemView.img_coin
+            )
+            itemView.apply {
+                if (coin != null) {
+                    tv_coin_name.text = coin.name
+                    tv_coin_price.text = coin.price?.toString()
+                    tv_coin_symbol.text = coin.symbol
+                    tv_base_symbol.text = "USD"
+                }
+            }
+
+        }
+    }
+
+    interface ItemCLickedListener {
+        fun onItemClicked(coinDetail: Coin)
+    }
+    fun setUpListener(itemCLicked: ItemCLickedListener){
+        mItemCLicked = itemCLicked
     }
 }
