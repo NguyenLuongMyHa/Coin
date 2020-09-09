@@ -15,7 +15,6 @@ import com.myha.coin.ui.main.viewmodel.MainViewModel
 import com.myha.coin.utils.Status
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.myha.coin.data.model.Coin
 import com.myha.coin.ui.main.adapter.MainAdapter
 import kotlinx.android.synthetic.main.activity_main.*

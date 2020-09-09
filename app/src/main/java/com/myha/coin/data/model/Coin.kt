@@ -4,22 +4,22 @@ import com.google.gson.annotations.SerializedName
 
 data class Coin(
     @SerializedName("id")
-    val id: Int,
+    val id: Int = 0,
     @SerializedName("symbol")
-    val symbol: String?,
+    val symbol: String = "",
     @SerializedName("sign")
-    val sign: String?,
+    val sign: String = "",
     @SerializedName("name")
-    val name: String?,
+    val name: String = "",
     @SerializedName("description")
-    val description: String?,
+    val description: String = "",
     @SerializedName("color")
-    val color: String?,
+    val color: String = "",
     @SerializedName("iconUrl")
-    val iconUrl: String?,
+    val iconUrl: String = "",
     @SerializedName("websiteUrl")
-    val websiteUrl: String?,
+    val websiteUrl: String = "",
     @SerializedName("price")
-    val price: Double?
+    val price: Double
 
 )
