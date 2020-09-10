@@ -21,10 +21,21 @@
         android:id="@+id/coinDetailFragment"
         android:name="com.myha.coin.ui.main.view.CoinDetailFragment"
         android:label="fragment_coin_detail"
-        tools:layout="@layout/fragment_coin_detail" />
+        tools:layout="@layout/fragment_coin_detail" >
+        <action
+            android:id="@+id/action_coinDetailFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+        <action
+            android:id="@+id/action_coinDetailFragment_to_newCoinFragment"
+            app:destination="@id/newCoinFragment" />
+    </fragment>
     <fragment
         android:id="@+id/newCoinFragment"
         android:name="com.myha.coin.ui.main.view.NewCoinFragment"
         android:label="fragment_new_coin"
-        tools:layout="@layout/fragment_new_coin" />
+        tools:layout="@layout/fragment_new_coin" >
+        <action
+            android:id="@+id/action_newCoinFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
 </navigation>

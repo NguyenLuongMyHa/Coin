@@ -10,18 +10,28 @@ data class Coin(
     @ColumnInfo(name = "id") @field:SerializedName("id")
     val id: Long,
     @ColumnInfo(name = "symbol") @field:SerializedName("symbol")
-    val symbol: String? = "",
+    var symbol: String? = "",
     @ColumnInfo(name = "sign") @field:SerializedName("sign")
-    val sign: String? = "",
+    var sign: String? = "",
     @ColumnInfo(name = "name") @field:SerializedName("name")
-    val name: String? = "",
+    var name: String? = "",
     @ColumnInfo(name = "description") @field:SerializedName("description")
-    val description: String? = "",
+    var description: String? = "",
     @ColumnInfo(name = "iconUrl") @field:SerializedName("iconUrl")
-    val iconUrl: String? = "",
+    var iconUrl: String? = "",
     @ColumnInfo(name = "websiteUrl") @field:SerializedName("websiteUrl")
-    val websiteUrl: String? = "",
+    var websiteUrl: String? = "",
     @ColumnInfo(name = "price") @field:SerializedName("price")
-    val price: Double?
+    var price: Double? = 0.0
 
+)
+
+data class NewCoin (
+    var symbol: String? = "",
+    var sign: String? = "",
+    var name: String? = "",
+    var description: String? = "",
+    var iconUrl: String? = "",
+    var websiteUrl: String? = "",
+    var price: Double? = 0.0
 )

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_item_edit"
+        android:enabled="true"
+        android:icon="@drawable/ic_edit"
+        android:iconTint="@android:color/holo_orange_dark"
+        android:title="Add"
+        android:visible="true"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_item_delete"
+        android:enabled="true"
+        android:icon="@drawable/ic_delete"
+        android:iconTint="@android:color/holo_orange_dark"
+        android:title="Add"
+        android:visible="true"
+        app:showAsAction="always" />
+</menu>

@@ -4,15 +4,10 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.RecyclerView
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 import com.myha.coin.R
 import com.myha.coin.data.model.Coin
-import com.myha.coin.ui.main.view.CoinDetailFragment
 import kotlinx.android.synthetic.main.item_coin.view.*
 
 
