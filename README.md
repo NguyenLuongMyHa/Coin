@@ -1,5 +1,5 @@
 # Coin
-Using Kotlin Coroutines, ViewModel, LiveData, Repository, and Room.   
+Using Kotlin Coroutines, ViewModel, LiveData, Repository, Room and Navigation.   
 This mini project follow https://developer.android.com/codelabs/kotlin-coroutines.  
 This app uses Architecture Components to separate the UI code in MainActivity from the application logic in MainViewModel. 
 
