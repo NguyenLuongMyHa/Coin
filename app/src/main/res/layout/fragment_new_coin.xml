@@ -61,7 +61,7 @@ tools:context=".ui.main.view.NewCoinFragment">
                 tools:srcCompat="@tools:sample/avatars" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_coin_name"
+                android:id="@+id/til_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -72,14 +72,14 @@ tools:context=".ui.main.view.NewCoinFragment">
                 app:layout_constraintTop_toBottomOf="@+id/img_coin_logo">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tv_coin_name"
+                    android:id="@+id/tv_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Name" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_coin_symbol"
+                android:id="@+id/til_type"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -87,17 +87,17 @@ tools:context=".ui.main.view.NewCoinFragment">
                 android:layout_marginEnd="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/til_coin_name">
+                app:layout_constraintTop_toBottomOf="@id/til_name">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tv_coin_symbol"
+                    android:id="@+id/tv_type"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Symbol" />
+                    android:hint="Type" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_coin_description"
+                android:id="@+id/til_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -105,17 +105,17 @@ tools:context=".ui.main.view.NewCoinFragment">
                 android:layout_marginEnd="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/til_coin_symbol">
+                app:layout_constraintTop_toBottomOf="@id/til_type">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tv_coin_description"
+                    android:id="@+id/tv_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Description" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_coin_web_url"
+                android:id="@+id/til_age"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -123,17 +123,17 @@ tools:context=".ui.main.view.NewCoinFragment">
                 android:layout_marginEnd="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/til_coin_description">
+                app:layout_constraintTop_toBottomOf="@id/til_description">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tv_coin_web_url"
+                    android:id="@+id/tv_age"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Website" />
+                    android:hint="Age" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_coin_price"
+                android:id="@+id/til_gender"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -141,14 +141,50 @@ tools:context=".ui.main.view.NewCoinFragment">
                 android:layout_marginEnd="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/til_coin_web_url">
+                app:layout_constraintTop_toBottomOf="@id/til_age">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tv_coin_price"
+                    android:id="@+id/tv_gender"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Price"
-                    android:inputType="number" />
+                    android:hint="Gender" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_size"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/til_gender">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tv_size"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Size" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_coat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/til_size">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tv_coat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Coat" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <ProgressBar

@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.item_animal.view.*
 
 
 class AnimalAdapter(private val animals: ArrayList<Animal>) : RecyclerView.Adapter<AnimalAdapter.DataViewHolder>() {
-    lateinit var mItemCLicked: ItemCLickedListener
+    private lateinit var mItemCLicked: ItemCLickedListener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataViewHolder =
         DataViewHolder(
@@ -44,14 +44,12 @@ class AnimalAdapter(private val animals: ArrayList<Animal>) : RecyclerView.Adapt
             Glide.with(itemView.context).load(animal.photos?.get(0)?.fullsize).into(itemView.img_animal)
 
             itemView.apply {
-                if (animal != null) {
-                    //set text
-                    tv_age.text = animal.age
-                    tv_gender.text = animal.gender
-                    tv_name.text = animal.name
-                    tv_size.text = animal.size
-                    tv_type.text = animal.type
-                }
+                //set text
+                tv_age.text = animal.age
+                tv_gender.text = animal.gender
+                tv_name.text = animal.name
+                tv_size.text = animal.size
+                tv_type.text = animal.type
             }
 
         }

@@ -14,18 +14,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.myha.coin.R
 import com.myha.coin.data.api.ApiHelper
 import com.myha.coin.data.api.RetrofitBuilder
-import com.myha.coin.data.db.CoinDatabase
-import com.myha.coin.data.model.Coin
-import com.myha.coin.data.model.NewCoin
-import com.myha.coin.ui.base.ViewModelFactory
-import com.myha.coin.ui.main.adapter.MainAdapter
-import com.myha.coin.ui.main.viewmodel.MainViewModel
+import com.myha.coin.data.db.AnimalDatabase
+import com.myha.coin.data.model.Animal
+import com.myha.coin.ui.base.AnimalVMFactory
+import com.myha.coin.ui.main.adapter.AnimalAdapter
+import com.myha.coin.ui.main.viewmodel.AnimalViewModel
 import com.myha.coin.utils.Status
 import kotlinx.android.synthetic.main.fragment_main.*
 
 class MainFragment : Fragment() {
-    private lateinit var viewModel: MainViewModel
-    private lateinit var adapter: MainAdapter
+    private lateinit var viewModel: AnimalViewModel
+    private lateinit var adapter: AnimalAdapter
     var navController: NavController? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,12 +32,9 @@ class MainFragment : Fragment() {
         setupViewModel()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        var view = inflater.inflate(R.layout.fragment_main, container, false)
-        setHasOptionsMenu(true);
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_main, container, false)
+        setHasOptionsMenu(true)
         return view
 
     }
@@ -68,12 +64,12 @@ class MainFragment : Fragment() {
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
             this,
-            ViewModelFactory(
-                ApiHelper(RetrofitBuilder.apiService), CoinDatabase.getInstance(
+            AnimalVMFactory(
+                ApiHelper(RetrofitBuilder.apiService), AnimalDatabase.getInstance(
                     requireContext()
                 )
             )
-        )[MainViewModel::class.java]
+        )[AnimalViewModel::class.java]
     }
 
     private fun setupUI() {
@@ -82,7 +78,7 @@ class MainFragment : Fragment() {
         }
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        adapter = MainAdapter(arrayListOf())
+        adapter = AnimalAdapter(arrayListOf())
         recyclerView.addItemDecoration(
             DividerItemDecoration(
                 recyclerView.context,
@@ -93,17 +89,10 @@ class MainFragment : Fragment() {
     }
 
     private fun setupAdapterClickListener() {
-        adapter.setUpListener(object : MainAdapter.ItemCLickedListener {
-            override fun onItemClicked(coinDetail: Coin) {
+        adapter.setUpListener(object : AnimalAdapter.ItemCLickedListener {
+            override fun onItemClicked(animal: Animal) {
                 val bundle = bundleOf(
-                    "coinId" to coinDetail.id,
-                    "coinName" to coinDetail.name,
-                    "coinSign" to coinDetail.sign,
-                    "coinSymbol" to coinDetail.symbol,
-                    "coinIcon" to coinDetail.iconUrl,
-                    "coinWeb" to coinDetail.websiteUrl,
-                    "coinPrice" to coinDetail.price,
-                    "coinDescription" to coinDetail.description
+                    "animal" to animal
                 )
                 navController!!.navigate(
                     R.id.action_mainFragment_to_coinDetailFragment,
@@ -114,7 +103,7 @@ class MainFragment : Fragment() {
         })
     }
     private fun getCoinsFromLocal() {
-        viewModel.getCoinsLocal().observe(requireActivity(), {
+        viewModel.getAnimalLocal().observe(requireActivity(), {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
@@ -152,7 +141,7 @@ class MainFragment : Fragment() {
     }
 
     private fun getCoinsFromNetwork() {
-        viewModel.getCoins().observe(requireActivity(), {
+        viewModel.getAnimalsNetwork().observe(requireActivity(), {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
@@ -163,7 +152,7 @@ class MainFragment : Fragment() {
                             "Get Data From Network Success",
                             Toast.LENGTH_LONG
                         ).show()
-                        resource.data?.let { res -> retrieveListFromNetwork(res.data.coins) }
+                        resource.data?.let { res -> retrieveListFromNetwork(res.animals) }
                     }
                     Status.ERROR -> {
                         recyclerView.visibility = View.VISIBLE
@@ -180,27 +169,27 @@ class MainFragment : Fragment() {
         })
     }
 
-    private fun retrieveList(coins: List<Coin>) {
-        if(coins.isEmpty())
+    private fun retrieveList(animals: List<Animal>) {
+        if(animals.isEmpty())
             getCoinsFromNetwork()
         else
         {
             adapter.apply {
-                addCoins(coins)
+                addAnimals(animals)
                 notifyDataSetChanged()
             }
         }
     }
 
-    private fun retrieveListFromNetwork(coins: List<Coin>) {
+    private fun retrieveListFromNetwork(animals: List<Animal>) {
 
-        viewModel.insertCoinsLocal(coins).observe(requireActivity(), {
+        viewModel.insertAllLocal(animals).observe(requireActivity(), {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
                         Toast.makeText(
                             requireContext(),
-                            "Get Coins Data From Network Success, Save Room",
+                            "Get Animals Data From Network Success, Save Room",
                             Toast.LENGTH_LONG
                         ).show()
                         getCoinsFromLocal()

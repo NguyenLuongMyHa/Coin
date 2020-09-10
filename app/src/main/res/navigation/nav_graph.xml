@@ -21,13 +21,16 @@
         android:id="@+id/coinDetailFragment"
         android:name="com.myha.coin.ui.main.view.CoinDetailFragment"
         android:label="fragment_coin_detail"
-        tools:layout="@layout/fragment_coin_detail" >
+        tools:layout="@layout/fragment_coin_detail">
         <action
             android:id="@+id/action_coinDetailFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
         <action
             android:id="@+id/action_coinDetailFragment_to_newCoinFragment"
             app:destination="@id/newCoinFragment" />
+        <argument
+            android:name="animal"
+            app:argType="com.myha.coin.data.model.Animal" />
     </fragment>
     <fragment
         android:id="@+id/newCoinFragment"
@@ -37,5 +40,9 @@
         <action
             android:id="@+id/action_newCoinFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
+        <argument
+            android:name="animal"
+            app:argType="com.myha.coin.data.model.Animal"
+            app:nullable="true" />
     </fragment>
 </navigation>

@@ -3,10 +3,7 @@ package com.myha.coin.ui.main.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import com.myha.coin.data.model.Animal
-import com.myha.coin.data.model.Coin
-import com.myha.coin.data.model.NewCoin
 import com.myha.coin.data.repository.AnimalRepository
-import com.myha.coin.data.repository.MainRepository
 import com.myha.coin.utils.Resource
 import kotlinx.coroutines.Dispatchers
 
@@ -25,6 +22,14 @@ class AnimalViewModel(private val animalRepository: AnimalRepository) : ViewMode
         emit(Resource.loading(data = null))
         try {
             emit(Resource.success(data = animalRepository.insertLocal(animal)))
+        } catch (exception: Exception) {
+            emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+    fun insertAllLocal(animals: List<Animal>) = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            emit(Resource.success(data = animalRepository.insertAllLocal(animals)))
         } catch (exception: Exception) {
             emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
         }
