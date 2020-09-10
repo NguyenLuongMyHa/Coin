@@ -4,10 +4,11 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.myha.coin.data.model.Animal
 import com.myha.coin.data.model.Coin
 
 @Database(
-    entities = [Coin::class],
+    entities = [Animal::class],
     version = 2,
     exportSchema = false
 )

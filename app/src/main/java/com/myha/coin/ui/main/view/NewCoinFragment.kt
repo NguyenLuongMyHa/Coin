@@ -10,44 +10,31 @@ import androidx.navigation.Navigation
 import com.myha.coin.R
 import com.myha.coin.data.api.ApiHelper
 import com.myha.coin.data.api.RetrofitBuilder
-import com.myha.coin.data.db.CoinDatabase
-import com.myha.coin.data.model.Coin
-import com.myha.coin.data.model.NewCoin
-import com.myha.coin.ui.base.ViewModelFactory
-import com.myha.coin.ui.main.viewmodel.MainViewModel
+import com.myha.coin.data.db.AnimalDatabase
+import com.myha.coin.data.model.Animal
+import com.myha.coin.ui.base.AnimalVMFactory
+import com.myha.coin.ui.main.viewmodel.AnimalViewModel
 import com.myha.coin.utils.Status
 import kotlinx.android.synthetic.main.fragment_new_coin.*
 
+
 class NewCoinFragment : Fragment() {
-    private lateinit var viewModel: MainViewModel
-    var navController: NavController? = null
-    private var coin : Coin? = null
+    private lateinit var viewModel: AnimalViewModel
+    private var navController: NavController? = null
+    private var animal : Animal? = null
     private var action : String? = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        coin = arguments?.getLong("coinId")?.let {
-            Coin(
-                id = it,
-                symbol = arguments?.getString("coinSymbol"),
-                sign = arguments?.getString("coinSign"),
-                name = arguments?.getString("coinName"),
-                description = arguments?.getString("coinDescription"),
-                iconUrl = arguments?.getString("coinIcon"),
-                websiteUrl = arguments?.getString("coinWeb"),
-                price = arguments?.getDouble("coinPrice")
-            )
-        }
+        animal = arguments?.getSerializable("animal") as Animal?
         action = arguments?.getString("action")
         setupViewModel()
 
     }
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        var view = inflater.inflate(R.layout.fragment_new_coin, container, false)
-        setHasOptionsMenu(true);
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_new_coin, container, false)
+        setHasOptionsMenu(true)
         return view
     }
 
@@ -61,29 +48,32 @@ class NewCoinFragment : Fragment() {
         inflater.inflate(R.menu.menu_new_coin, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_item_save -> {
                 if (action != "EDIT") {
-                    var newCoin = NewCoin()
-                    newCoin.iconUrl = ""
-                    newCoin.description = tv_coin_description.text.toString()
-                    newCoin.name = tv_coin_name.text.toString()
-                    newCoin.symbol = tv_coin_symbol.text.toString()
-                    newCoin.websiteUrl = tv_coin_web_url.text.toString()
-                    newCoin.price = tv_coin_price.text.toString().toDouble()
-                    saveNewCoin(newCoin)
-                }
-                else {
-                    coin?.id?.let {
-                        var editCoin = Coin(it)
-                        editCoin.iconUrl = coin?.iconUrl
-                        editCoin.description = tv_coin_description.text.toString()
-                        editCoin.name = tv_coin_name.text.toString()
-                        editCoin.symbol = tv_coin_symbol.text.toString()
-                        editCoin.websiteUrl = tv_coin_web_url.text.toString()
-                        editCoin.price = tv_coin_price.text.toString().toDouble()
-                        editCoin(editCoin) }
+                    val animal = Animal()
+                    animal.description = tv_description.text.toString()
+                    animal.name = tv_name.text.toString()
+                    animal.size = tv_size.text.toString()
+                    animal.gender = tv_gender.text.toString()
+                    animal.coat = tv_coat.text.toString()
+                    animal.type = tv_type.text.toString()
+                    animal.age = tv_age.text.toString()
+                    saveNewAnimal(animal)
+                } else {
+                    animal?.id?.let {
+                        val animal = Animal(it)
+                        animal.description = tv_description.text.toString()
+                        animal.name = tv_name.text.toString()
+                        animal.size = tv_size.text.toString()
+                        animal.gender = tv_gender.text.toString()
+                        animal.coat = tv_coat.text.toString()
+                        animal.type = tv_type.text.toString()
+                        animal.age = tv_age.text.toString()
+                        updateAnimal(animal)
+                    }
                 }
                 return true
             }
@@ -95,12 +85,12 @@ class NewCoinFragment : Fragment() {
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
             this,
-            ViewModelFactory(
-                ApiHelper(RetrofitBuilder.apiService), CoinDatabase.getInstance(
+            AnimalVMFactory(
+                ApiHelper(RetrofitBuilder.apiService), AnimalDatabase.getInstance(
                     requireContext()
                 )
             )
-        )[MainViewModel::class.java]
+        )[AnimalViewModel::class.java]
     }
 
     private fun setupUI() {
@@ -108,23 +98,25 @@ class NewCoinFragment : Fragment() {
             onOptionsItemSelected(it)
         }
         if (action == "EDIT") {
-            tv_coin_description.setText(coin?.description)
-            tv_coin_name.setText(coin?.name)
-            tv_coin_symbol.setText(coin?.symbol)
-            tv_coin_web_url.setText(coin?.websiteUrl)
-            tv_coin_price.setText(coin?.price?.toString())
+            tv_description.setText(animal?.description)
+            tv_name.setText(animal?.name)
+            tv_size.setText(animal?.size)
+            tv_gender.setText(animal?.gender)
+            tv_coat.setText(animal?.coat)
+            tv_age.setText(animal?.age)
+            tv_type.setText(animal?.type)
         }
     }
 
-    private fun saveNewCoin(coin: NewCoin) {
-        viewModel.insertCoinLocal(coin).observe(requireActivity(), {
+    private fun saveNewAnimal(animal: Animal) {
+        viewModel.insertLocal(animal).observe(requireActivity(), {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
                         progressBar.visibility = View.GONE
                         Toast.makeText(
                             requireContext(),
-                            "Save Coin to Room Success",
+                            "Save Animal to Room Success",
                             Toast.LENGTH_LONG
                         ).show()
                         navController!!.navigate(R.id.action_newCoinFragment_to_mainFragment)
@@ -133,7 +125,7 @@ class NewCoinFragment : Fragment() {
                         progressBar.visibility = View.GONE
                         Toast.makeText(
                             requireContext(),
-                            "Save Coin to Room Fail" + resource.message,
+                            "Save Animal to Room Fail" + resource.message,
                             Toast.LENGTH_LONG
                         ).show()
                     }
@@ -146,15 +138,15 @@ class NewCoinFragment : Fragment() {
 
     }
 
-    private fun editCoin(coin: Coin) {
-        viewModel.updateCoin(coin).observe(requireActivity(), {
+    private fun updateAnimal(animal: Animal) {
+        viewModel.updateLocal(animal).observe(requireActivity(), {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
                         progressBar.visibility = View.GONE
                         Toast.makeText(
                             requireContext(),
-                            "Edit Coin to Room Success",
+                            "Edit Animal to Room Success",
                             Toast.LENGTH_LONG
                         ).show()
                         navController!!.navigate(R.id.action_newCoinFragment_to_mainFragment)
@@ -163,7 +155,7 @@ class NewCoinFragment : Fragment() {
                         progressBar.visibility = View.GONE
                         Toast.makeText(
                             requireContext(),
-                            "Edit Coin to Room Fail" + resource.message,
+                            "Edit Animal to Room Fail" + resource.message,
                             Toast.LENGTH_LONG
                         ).show()
                     }

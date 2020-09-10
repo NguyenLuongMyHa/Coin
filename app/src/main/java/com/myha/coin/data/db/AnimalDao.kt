@@ -2,14 +2,15 @@ package com.myha.coin.data.db
 
 import androidx.room.*
 import com.myha.coin.data.model.Animal
-import com.myha.coin.data.model.Coin
-import com.myha.coin.data.model.NewCoin
 
 @Dao
 interface AnimalDao {
 
     @Insert(entity = Animal::class, onConflict = OnConflictStrategy.REPLACE)
-    fun insert(animal: Animal)
+    suspend fun insert(animal: Animal)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(animals: List<Animal>)
 
     @Query("SELECT * FROM animals ORDER BY id ASC")
     suspend fun getAnimals(): List<Animal>

@@ -2,13 +2,16 @@ package com.myha.coin.data.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
+
 @Entity(tableName = "animals")
 data class Animal(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id") @field:SerializedName("id")
-    val id: Long,
+    val id: Long?,
     @ColumnInfo(name = "type") @field:SerializedName("type")
     var type: String? = "",
     @ColumnInfo(name = "age") @field:SerializedName("age")
@@ -23,11 +26,11 @@ data class Animal(
     var name: String? = "",
     @ColumnInfo(name = "description") @field:SerializedName("description")
     var description: String? = "",
-    @ColumnInfo(name = "photos") @field:SerializedName("photos")
+    @Ignore @ColumnInfo(name = "photos") @field:SerializedName("photos")
     val photos: List<Photo>? = null,
-    @ColumnInfo(name = "contact") @field:SerializedName("contact")
+    @Ignore @ColumnInfo(name = "contact") @field:SerializedName("contact")
     var contact: Contact? = null
-)
+) : Serializable
 
 data class Photo(
     @SerializedName("small")
@@ -38,7 +41,7 @@ data class Photo(
     val largesize: String,
     @SerializedName("full")
     val fullsize: String
-)
+) : Serializable
 
 data class Contact(
     @SerializedName("email")
@@ -47,7 +50,7 @@ data class Contact(
     val phone: String,
     @SerializedName("address")
     val address: Address
-)
+) : Serializable
 
 data class Address(
     @SerializedName("address1")
@@ -60,4 +63,4 @@ data class Address(
     val state: String,
     @SerializedName("country")
     val country: String
-)
+) : Serializable

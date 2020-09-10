@@ -1,9 +1,6 @@
 package com.myha.coin.ui.main.view
 
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.text.Html
 import android.view.*
 import android.widget.Toast
 import androidx.core.os.bundleOf
@@ -11,38 +8,27 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
+import com.bumptech.glide.Glide
 import com.myha.coin.R
 import com.myha.coin.data.api.ApiHelper
 import com.myha.coin.data.api.RetrofitBuilder
-import com.myha.coin.data.db.CoinDatabase
-import com.myha.coin.data.model.Coin
-import com.myha.coin.ui.base.ViewModelFactory
-import com.myha.coin.ui.main.viewmodel.MainViewModel
+import com.myha.coin.data.db.AnimalDatabase
+import com.myha.coin.data.model.Animal
+import com.myha.coin.ui.base.AnimalVMFactory
+import com.myha.coin.ui.main.viewmodel.AnimalViewModel
 import com.myha.coin.utils.Status
 import kotlinx.android.synthetic.main.fragment_coin_detail.*
 
 class CoinDetailFragment : Fragment() {
-    private lateinit var viewModel: MainViewModel
-    var navController: NavController? = null
+    private lateinit var viewModel: AnimalViewModel
+    private var navController: NavController? = null
     
     
-    private var coin : Coin? = null
+    private var animal : Animal? = null
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        coin = arguments?.getLong("coinId")?.let {
-            Coin(
-                id = it,
-                symbol = arguments?.getString("coinSymbol"),
-                sign = arguments?.getString("coinSign"),
-                name = arguments?.getString("coinName"),
-                description = arguments?.getString("coinDescription"),
-                iconUrl = arguments?.getString("coinIcon"),
-                websiteUrl = arguments?.getString("coinWeb"),
-                price = arguments?.getDouble("coinPrice")
-            )
-        }
+        animal = arguments?.getSerializable("animal") as Animal?
         setupViewModel()
 
     }
@@ -51,8 +37,8 @@ class CoinDetailFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        var view = inflater.inflate(R.layout.fragment_coin_detail, container, false)
-        setHasOptionsMenu(true);
+        val view = inflater.inflate(R.layout.fragment_coin_detail, container, false)
+        setHasOptionsMenu(true)
         return view
     }
 
@@ -72,7 +58,7 @@ class CoinDetailFragment : Fragment() {
                 return true
             }
             R.id.menu_item_delete -> {
-                coin?.let { deleteCoin(it) }
+                animal?.let { deleteCoin(it) }
                 return true
             }
             else -> super.onOptionsItemSelected(item)
@@ -83,44 +69,32 @@ class CoinDetailFragment : Fragment() {
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
             this,
-            ViewModelFactory(
-                ApiHelper(RetrofitBuilder.apiService), CoinDatabase.getInstance(
+            AnimalVMFactory(
+                ApiHelper(RetrofitBuilder.apiService), AnimalDatabase.getInstance(
                     requireContext()
                 )
             )
-        )[MainViewModel::class.java]
+        )[AnimalViewModel::class.java]
     }
 
     private fun setupUI() {
         toolbar.setOnMenuItemClickListener {
             onOptionsItemSelected(it)
         }
-
-        tv_coin_name.text = coin?.name
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            tv_coin_description.text = Html.fromHtml(coin?.description, Html.FROM_HTML_MODE_COMPACT);
-        } else {
-            tv_coin_description.text =  Html.fromHtml(coin?.description);
-        }
-        tv_coin_price.text = coin?.price.toString()
-        tv_coin_symbol.text = coin?.symbol
-        tv_coin_web_url.text = coin?.websiteUrl
-        GlideToVectorYou.init().with(requireContext()).load(
-            Uri.parse(coin?.iconUrl),
-            img_coin_logo
-        )
+        tv_address.text = animal?.contact.toString()
+        tv_age.text = animal?.age
+        tv_coat.text = animal?.coat
+        tv_description.text = animal?.description
+        tv_gender.text = animal?.gender
+        tv_name.text = animal?.name
+        tv_size.text = animal?.size
+        tv_type.text = animal?.type
+        Glide.with(requireContext()).load(animal?.photos?.get(0)?.fullsize).into(img_photo)
     }
 
     private fun editCoin() {
         val bundle = bundleOf(
-            "coinId" to coin?.id,
-            "coinName" to coin?.name,
-            "coinSign" to coin?.sign,
-            "coinSymbol" to coin?.symbol,
-            "coinIcon" to coin?.iconUrl,
-            "coinWeb" to coin?.websiteUrl,
-            "coinPrice" to coin?.price,
-            "coinDescription" to coin?.description,
+            "animal" to animal,
             "action" to "EDIT"
         )
         navController!!.navigate(
@@ -130,15 +104,15 @@ class CoinDetailFragment : Fragment() {
     }
 
 
-    private fun deleteCoin(coin: Coin) {
-        viewModel.deleteCoin(coin).observe(requireActivity(), {
+    private fun deleteCoin(animal: Animal) {
+        viewModel.deleteLocal(animal).observe(requireActivity(), {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
                         progressBar.visibility = View.GONE
                         Toast.makeText(
                             requireContext(),
-                            "Delete Coin from Room Success",
+                            "Delete Animal from Room Success",
                             Toast.LENGTH_LONG
                         ).show()
                         navController!!.navigate(R.id.action_coinDetailFragment_to_mainFragment)
@@ -147,7 +121,7 @@ class CoinDetailFragment : Fragment() {
                         progressBar.visibility = View.GONE
                         Toast.makeText(
                             requireContext(),
-                            "Delete Coin from Room Fail" + resource.message,
+                            "Delete Animal from Room Fail" + resource.message,
                             Toast.LENGTH_LONG
                         ).show()
                     }

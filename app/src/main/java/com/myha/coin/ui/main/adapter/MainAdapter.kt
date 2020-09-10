@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.item_coin.view.*
 
 
 class MainAdapter(private val coins: ArrayList<Coin>) : RecyclerView.Adapter<MainAdapter.DataViewHolder>() {
-    lateinit var mItemCLicked: ItemCLickedListener
+    private lateinit var mItemCLicked: ItemCLickedListener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataViewHolder =
         DataViewHolder(

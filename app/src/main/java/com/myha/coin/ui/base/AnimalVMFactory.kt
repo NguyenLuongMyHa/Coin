@@ -4,9 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.myha.coin.data.api.ApiHelper
 import com.myha.coin.data.db.AnimalDatabase
-import com.myha.coin.data.db.CoinDatabase
 import com.myha.coin.data.repository.AnimalRepository
-import com.myha.coin.data.repository.MainRepository
 import com.myha.coin.ui.main.viewmodel.AnimalViewModel
 import com.myha.coin.ui.main.viewmodel.MainViewModel
 

@@ -23,7 +23,7 @@ interface CoinDao {
     suspend fun updateCoin(coin: Coin)
 
     @Update
-    suspend fun updateCoins(coins: List<Coin>);
+    suspend fun updateCoins(coins: List<Coin>)
 
     @Query("DELETE FROM coins")
     suspend fun deleteAll()
