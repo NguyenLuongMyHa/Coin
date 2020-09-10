@@ -13,7 +13,7 @@ interface CoinDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(coins: List<Coin>)
 
-    @Query("SELECT * FROM coins ORDER BY id ASC")
+    @Query("SELECT * FROM coins ORDER BY price DESC")
     suspend fun getCoins(): List<Coin>
 
     @Query("SELECT * FROM coins WHERE name LIKE :queryString OR description LIKE :queryString")

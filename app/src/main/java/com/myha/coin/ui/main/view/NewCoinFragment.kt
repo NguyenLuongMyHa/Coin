@@ -66,7 +66,7 @@ class NewCoinFragment : Fragment() {
             R.id.menu_item_save -> {
                 if (action != "EDIT") {
                     var newCoin = NewCoin()
-                    //newCoin?.iconUrl = upload img
+                    newCoin.iconUrl = ""
                     newCoin.description = tv_coin_description.text.toString()
                     newCoin.name = tv_coin_name.text.toString()
                     newCoin.symbol = tv_coin_symbol.text.toString()
@@ -77,7 +77,7 @@ class NewCoinFragment : Fragment() {
                 else {
                     coin?.id?.let {
                         var editCoin = Coin(it)
-                        //newCoin?.iconUrl = upload img
+                        editCoin.iconUrl = coin?.iconUrl
                         editCoin.description = tv_coin_description.text.toString()
                         editCoin.name = tv_coin_name.text.toString()
                         editCoin.symbol = tv_coin_symbol.text.toString()
