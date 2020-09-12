@@ -2,12 +2,13 @@ package com.myha.coin.data.db
 
 import androidx.room.*
 import com.myha.coin.data.model.Animal
+import com.myha.coin.data.model.NewAnimal
 
 @Dao
 interface AnimalDao {
 
     @Insert(entity = Animal::class, onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(animal: Animal)
+    suspend fun insert(animal: NewAnimal)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(animals: List<Animal>)

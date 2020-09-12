@@ -9,11 +9,12 @@
 
     <ImageView
         android:id="@+id/img_animal"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
+        android:background="@drawable/border_square"
         android:padding="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -60,11 +61,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
         android:text="Gender:"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/tv_type"
-        app:layout_constraintEnd_toStartOf="@+id/tv_gender"
         app:layout_constraintStart_toEndOf="@+id/tv_type" />
 
     <TextView
@@ -83,6 +82,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:text="TextView"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/tv_1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tv_1" />
@@ -93,36 +93,44 @@
         android:layout_height="wrap_content"
         android:text="TextView"
         app:layout_constraintBottom_toBottomOf="@+id/tv_2"
-        app:layout_constraintEnd_toStartOf="@+id/tv_4"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="@+id/tv_name" />
 
     <TextView
         android:id="@+id/tv_age"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:text="TextView"
         app:layout_constraintBottom_toBottomOf="@+id/tv_3"
-        app:layout_constraintEnd_toStartOf="@+id/tv_5"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="@+id/tv_type" />
 
     <TextView
         android:id="@+id/tv_gender"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:text="TextView"
         app:layout_constraintBottom_toBottomOf="@+id/tv_4"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_4" />
 
     <TextView
         android:id="@+id/tv_size"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:text="TextView"
         app:layout_constraintBottom_toBottomOf="@+id/tv_5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/tv_gender" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.6" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,10 +2,8 @@ package com.myha.coin.utils
 
 class Constant {
     companion object {
-        const val AUTH = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJXN3ZYMWVuZEpOZUFGRVhqcEF1NE90S1piVHZ5NjByV1lYTzRtYmlLNVU2M0RlN3lIMyIsImp0aSI6ImQyZjY4ZjMzNzI5N2M0ODg3MmU1MDlmYTM5MWI1MTAzY2ZhMGFjNWYyODg1ZDhjNjU0MTY0OWFhNDAzODRlZDk5Y2E3ZmVlZDgzMjA5NTVkIiwiaWF0IjoxNTk5NzQ5NDUxLCJuYmYiOjE1OTk3NDk0NTEsImV4cCI6MTU5OTc1MzA1MSwic3ViIjoiIiwic2NvcGVzIjpbXX0.bablD9uT4UFncXuR_LWMglKdcgFXUcinEb2jUlcUZjN-aBJ_K8cxpw9LRZeOhd7tpoDLFX-GiKMzmWYnEjOGktlyiEJsfu-2t2w3VA6JciqexoOzPNtKjNy0a2_Oni4qhhjxeR2TJ_Ko1pB7ah4ivpsmSTXhDIgS34mswNTIwdMwZZLyLZr5L5zY2mD2DFAdr7pni8G705S1eI7iwgvuHsxPIxb79LdFR8QojoMIe3m1j7CHxqfP0crgBfMz17Yn0sTuzCkw97SZIy_jpmOkwmvI-OTuJcyVUkYjKzFBZIYyxcNGze1M1fFdjr6HaQgkKY0iDE32JyIURrzWKAglqA"
-        private const val PK = "W7vX1endJNeAFEXjpAu4OtKZbTvy60rWYXO4mbiK5U63De7yH3"
-        private const val SK = "Ssxw7nypH6yBYqYZKuHlH2DHkdqLEPm6p6lHyvQe"
-        const val GENERATE_TOKEN =
-            "curl -d \"grant_type=client_credentials&client_id=$PK&client_secret=$SK\" https://api.petfinder.com/v2/oauth2/token"
+        var AUTH = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJXN3ZYMWVuZEpOZUFGRVhqcEF1NE90S1piVHZ5NjByV1lYTzRtYmlLNVU2M0RlN3lIMyIsImp0aSI6IjBkNTlhMzU1YWY5OWEzYjJiYmYxZDI3N2NmNGYwMDkxNTM1NGIzZTM3YjMxZDdlMzY3ZjJhYjQ0Njk3OTVjYTFiZDllMjkwNWM1MzI1MmNmIiwiaWF0IjoxNTk5ODA4NjQ0LCJuYmYiOjE1OTk4MDg2NDQsImV4cCI6MTU5OTgxMjI0NCwic3ViIjoiIiwic2NvcGVzIjpbXX0.OSJfo8a4kRhW608wcaNpPaM4yjswluVNTmcUOTLuoFL-hJLFO2atBrUKGBQUlo9487wzrk964lRCL3jz-1SE7hoh5n4a0VmgjnJ5STZosq_FWtr_neI0uGmjS_zcdzOKvlrZBOU6AemWpX7RqDoKxeZ5GSPnCDYkFBHPGleGhXcqjgBdV4t5QjqAmJckPYMyKCeLmSvW7sbigw1VJ05VQKI-GN8qyiKGNjrVzp2xdKfMpf8DzEe-GyLut6ZQUPTsCVSC0NFMbTPCiPbIr1NQ6d5HIZwKHBZqsfn-avlaHMXpoc5pkV42Arf5BWicimL2Luahw0Vj5VtM1FgpU55XIw"
+        const val CLIENT_ID = "W7vX1endJNeAFEXjpAu4OtKZbTvy60rWYXO4mbiK5U63De7yH3"
+        const val CLIENT_SECRET = "Ssxw7nypH6yBYqYZKuHlH2DHkdqLEPm6p6lHyvQe"
     }
 }

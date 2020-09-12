@@ -41,7 +41,7 @@ class AnimalAdapter(private val animals: ArrayList<Animal>) : RecyclerView.Adapt
 
     class DataViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(animal: Animal) {
-            Glide.with(itemView.context).load(animal.photos?.get(0)?.fullsize).into(itemView.img_animal)
+//            Glide.with(itemView.context).load(animal.photos?.get(0)?.fullsize).into(itemView.img_animal)
 
             itemView.apply {
                 //set text

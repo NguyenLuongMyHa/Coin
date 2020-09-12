@@ -1,9 +1,6 @@
 package com.myha.coin.data.model
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.Ignore
-import androidx.room.PrimaryKey
+import androidx.room.*
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
@@ -11,7 +8,7 @@ import java.io.Serializable
 data class Animal(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id") @field:SerializedName("id")
-    val id: Long?,
+    var id: Long,
     @ColumnInfo(name = "type") @field:SerializedName("type")
     var type: String? = "",
     @ColumnInfo(name = "age") @field:SerializedName("age")
@@ -26,9 +23,9 @@ data class Animal(
     var name: String? = "",
     @ColumnInfo(name = "description") @field:SerializedName("description")
     var description: String? = "",
-    @Ignore @ColumnInfo(name = "photos") @field:SerializedName("photos")
-    val photos: List<Photo>? = null,
-    @Ignore @ColumnInfo(name = "contact") @field:SerializedName("contact")
+//    @SerializedName("photos")
+//    val photos: List<Photo>? = null,
+    @Embedded @field:SerializedName("contact")
     var contact: Contact? = null
 ) : Serializable
 
@@ -41,26 +38,37 @@ data class Photo(
     val largesize: String,
     @SerializedName("full")
     val fullsize: String
-) : Serializable
-
+)
+@Entity(tableName = "contacts")
 data class Contact(
-    @SerializedName("email")
+    @ColumnInfo(name = "email") @field:SerializedName("email")
     val email: String,
-    @SerializedName("phone")
+    @ColumnInfo(name = "phone") @field:SerializedName("phone")
     val phone: String,
-    @SerializedName("address")
-    val address: Address
-) : Serializable
-
+    @Embedded @field:SerializedName("address")
+    val address: Address? = null
+)
+@Entity(tableName = "address")
 data class Address(
-    @SerializedName("address1")
+    @ColumnInfo(name = "address1") @field:SerializedName("address1")
     val address1: String,
-    @SerializedName("address2")
+    @ColumnInfo(name = "address2") @field:SerializedName("address2")
     val address2: String,
-    @SerializedName("city")
+    @ColumnInfo(name = "city") @field:SerializedName("city")
     val city: String,
-    @SerializedName("state")
+    @ColumnInfo(name = "state") @field:SerializedName("state")
     val state: String,
-    @SerializedName("country")
+    @ColumnInfo(name = "country") @field:SerializedName("country")
     val country: String
-) : Serializable
+)
+data class NewAnimal(
+    var type: String? = "",
+    var age: String? = "",
+    var gender: String? = "",
+    var size: String? = "",
+    var coat: String? = "",
+    var name: String? = "",
+    var description: String? = "",
+    //val photos: List<Photo>? = null,
+    //var contact: Contact? = null
+)
