@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.bumptech.glide.Glide
 import com.myha.coin.R
 import com.myha.coin.data.api.ApiHelper
 import com.myha.coin.data.api.RetrofitBuilder
@@ -17,6 +18,7 @@ import com.myha.coin.ui.base.AnimalVMFactory
 import com.myha.coin.ui.main.viewmodel.AnimalViewModel
 import com.myha.coin.utils.Status
 import kotlinx.android.synthetic.main.fragment_coin_detail.*
+import kotlinx.android.synthetic.main.item_animal.view.*
 
 class AnimalDetailFragment : Fragment() {
     private lateinit var viewModel: AnimalViewModel
@@ -84,7 +86,6 @@ class AnimalDetailFragment : Fragment() {
         toolbar.setOnMenuItemClickListener {
             onOptionsItemSelected(it)
         }
-//        tv_address.text = animal?.contact.toString()
         tv_age.text = animal?.age
         tv_coat.text = animal?.coat
         tv_description.text = animal?.description
@@ -92,10 +93,13 @@ class AnimalDetailFragment : Fragment() {
         tv_name.text = animal?.name
         tv_size.text = animal?.size
         tv_type.text = animal?.type
-        tv_address.text = animal?.contact?.address.toString()
+        tv_address.text = animal?.contact?.address?.getAddress()
         tv_phone.text = animal?.contact?.phone
         tv_email.text = animal?.contact?.email
-//        Glide.with(requireContext()).load(animal?.photos?.get(0)?.fullsize).into(img_photo)
+        if(animal?.photos?.size != 0)
+            Glide.with(requireContext()).load(animal?.photos?.get(0)?.fullsize).into(img_photo)
+        else
+            Glide.with(requireContext()).load(R.drawable.ic_image).into(img_photo)
     }
 
     private fun updateAnimal() {

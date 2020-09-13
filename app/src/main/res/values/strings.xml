@@ -2,4 +2,16 @@
     <string name="app_name">Pet Finder</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="age">Age</string>
+    <string name="detail">Detail</string>
+    <string name="name">Name</string>
+    <string name="type">Type</string>
+    <string name="gender">Gender</string>
+    <string name="size">Size</string>
+    <string name="coat">Coat</string>
+    <string name="description">Description</string>
+    <string name="owner_email">Owner Email</string>
+    <string name="owner_phone">Owner Phone</string>
+    <string name="owner_address">Owner Address</string>
+    <string name="pet_finder">Pet Finder</string>
 </resources>

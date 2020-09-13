@@ -16,9 +16,6 @@ interface AnimalDao {
     @Query("SELECT * FROM animals ORDER BY id ASC")
     suspend fun getAnimals(): List<Animal>
 
-    @Query("SELECT * FROM animals WHERE type LIKE :queryString OR name LIKE :queryString OR description LIKE :queryString")
-    suspend fun find(queryString: String): List<Animal>
-
     @Update
     suspend fun update(animal: Animal)
 

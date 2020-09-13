@@ -4,6 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.myha.coin.R
 import com.myha.coin.R.layout.item_animal
 import com.myha.coin.data.model.Animal
 import kotlinx.android.synthetic.main.item_animal.view.*
@@ -41,8 +42,11 @@ class AnimalAdapter(private val animals: ArrayList<Animal>) : RecyclerView.Adapt
 
     class DataViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(animal: Animal) {
-//            Glide.with(itemView.context).load(animal.photos?.get(0)?.fullsize).into(itemView.img_animal)
-
+            if(animal.photos?.size != 0)
+                Glide.with(itemView.context).load(animal.photos?.get(0)?.fullsize).into(itemView.img_animal)
+            else
+                Glide.with(itemView.context).load(R.drawable.ic_image)
+                    .into(itemView.img_animal);
             itemView.apply {
                 //set text
                 tv_age.text = animal.age

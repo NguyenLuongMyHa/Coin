@@ -166,10 +166,6 @@ class NewAnimalFragment : Fragment() {
         return flag
     }
 
-    private fun verifyNotBlank(text: String) : Boolean{
-        return (text.isNotEmpty())
-    }
-
     private fun updateAnimal(animal: Animal) {
         val tilList = listOf<TextInputLayout>(til_name, til_age, til_description, til_gender, til_size, til_type)
         val tieList = listOf<TextInputEditText>(tv_name, tv_age, tv_description, tv_gender, tv_size, tv_type)

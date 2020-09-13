@@ -26,7 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center|center_horizontal|center_vertical"
-                android:text="Pet Finder"
+                android:text="@string/pet_finder"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@android:color/holo_orange_dark"
                 android:textStyle="bold"

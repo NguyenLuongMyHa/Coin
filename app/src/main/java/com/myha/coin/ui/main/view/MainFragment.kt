@@ -274,7 +274,6 @@ class MainFragment : Fragment() {
     }
 
     private fun retrieveListFromNetwork(animals: List<Animal>) {
-
         viewModel.insertAllLocal(animals).observe(requireActivity(), {
             it?.let { resource ->
                 when (resource.status) {
