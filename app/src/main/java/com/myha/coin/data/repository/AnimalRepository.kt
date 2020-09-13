@@ -1,11 +1,24 @@
 package com.myha.coin.data.repository
 
+import android.util.Log
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.myha.coin.data.api.ApiHelper
 import com.myha.coin.data.db.AnimalDatabase
 import com.myha.coin.data.model.Animal
+import com.myha.coin.data.model.AnimalPagingSource
 import com.myha.coin.data.model.NewAnimal
+import kotlinx.coroutines.flow.Flow
 
 class AnimalRepository(private val apiHelper: ApiHelper, private val database: AnimalDatabase) {
+    fun getSearchResultStream(query: String): Flow<PagingData<Animal>> {
+        Log.d("AnimalRepository", "New query: $query")
+        return Pager(
+            config = PagingConfig(pageSize = 20, enablePlaceholders = false),
+            pagingSourceFactory = { AnimalPagingSource(apiHelper, query) }
+        ).flow
+    }
     suspend fun getToken() = apiHelper.getToken()
     suspend fun getAnimalsNetwork() = apiHelper.getAnimals()
     suspend fun findAnimalsByTypeNetwork(queryString: String) = apiHelper.findAnimalsByType(queryString)

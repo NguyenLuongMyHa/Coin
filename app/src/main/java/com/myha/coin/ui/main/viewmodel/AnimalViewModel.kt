@@ -3,13 +3,32 @@ package com.myha.coin.ui.main.viewmodel
 import android.app.DownloadManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.myha.coin.data.model.Animal
 import com.myha.coin.data.model.NewAnimal
 import com.myha.coin.data.repository.AnimalRepository
 import com.myha.coin.utils.Resource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 
 class AnimalViewModel(private val animalRepository: AnimalRepository) : ViewModel() {
+    private var currentQueryValue: String? = null
+
+    private var currentSearchResult: Flow<PagingData<Animal>>? = null
+
+    fun searchAnimal(queryString: String): Flow<PagingData<Animal>> {
+        val lastResult = currentSearchResult
+        if (queryString == currentQueryValue && lastResult != null) {
+            return lastResult
+        }
+        currentQueryValue = queryString
+        val newResult: Flow<PagingData<Animal>> = animalRepository.getSearchResultStream(queryString)
+            .cachedIn(viewModelScope)
+        currentSearchResult = newResult
+        return newResult
+    }
 
     fun getToken() = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
