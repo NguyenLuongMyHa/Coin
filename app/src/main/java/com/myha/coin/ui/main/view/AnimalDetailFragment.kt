@@ -18,8 +18,9 @@ import com.myha.coin.ui.base.AnimalVMFactory
 import com.myha.coin.ui.main.viewmodel.AnimalViewModel
 import com.myha.coin.utils.Status
 import kotlinx.android.synthetic.main.fragment_coin_detail.*
+import kotlinx.android.synthetic.main.item_animal.view.*
 
-class CoinDetailFragment : Fragment() {
+class AnimalDetailFragment : Fragment() {
     private lateinit var viewModel: AnimalViewModel
     private var navController: NavController? = null
     
@@ -54,7 +55,7 @@ class CoinDetailFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_item_edit -> {
-                editCoin()
+                updateAnimal()
                 return true
             }
             R.id.menu_item_delete -> {
@@ -78,10 +79,13 @@ class CoinDetailFragment : Fragment() {
     }
 
     private fun setupUI() {
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back)
+        toolbar.setNavigationOnClickListener{
+            navController!!.navigate(R.id.action_coinDetailFragment_to_mainFragment)
+        }
         toolbar.setOnMenuItemClickListener {
             onOptionsItemSelected(it)
         }
-        tv_address.text = animal?.contact.toString()
         tv_age.text = animal?.age
         tv_coat.text = animal?.coat
         tv_description.text = animal?.description
@@ -89,10 +93,16 @@ class CoinDetailFragment : Fragment() {
         tv_name.text = animal?.name
         tv_size.text = animal?.size
         tv_type.text = animal?.type
-        Glide.with(requireContext()).load(animal?.photos?.get(0)?.fullsize).into(img_photo)
+        tv_address.text = animal?.contact?.address?.getAddress()
+        tv_phone.text = animal?.contact?.phone
+        tv_email.text = animal?.contact?.email
+        if(animal?.photos?.size != 0)
+            Glide.with(requireContext()).load(animal?.photos?.get(0)?.fullsize).into(img_photo)
+        else
+            Glide.with(requireContext()).load(R.drawable.ic_image).into(img_photo)
     }
 
-    private fun editCoin() {
+    private fun updateAnimal() {
         val bundle = bundleOf(
             "animal" to animal,
             "action" to "EDIT"

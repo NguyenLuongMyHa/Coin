@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -19,6 +20,7 @@ import com.myha.coin.data.model.Animal
 import com.myha.coin.ui.base.AnimalVMFactory
 import com.myha.coin.ui.main.adapter.AnimalAdapter
 import com.myha.coin.ui.main.viewmodel.AnimalViewModel
+import com.myha.coin.utils.Constant
 import com.myha.coin.utils.Status
 import kotlinx.android.synthetic.main.fragment_main.*
 
@@ -26,7 +28,7 @@ class MainFragment : Fragment() {
     private lateinit var viewModel: AnimalViewModel
     private lateinit var adapter: AnimalAdapter
     var navController: NavController? = null
-
+    private var isAuth = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupViewModel()
@@ -43,7 +45,10 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
         setupUI()
-        getCoinsFromLocal()
+        if(!isAuth)
+            getApiToken()
+        else
+            getPetsFromLocal()
         setupAdapterClickListener()
     }
 
@@ -70,9 +75,46 @@ class MainFragment : Fragment() {
                 )
             )
         )[AnimalViewModel::class.java]
+
     }
 
+    private fun getApiToken() {
+        viewModel.getToken().observe(requireActivity(), {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        recyclerView.visibility = View.VISIBLE
+                        progressBar.visibility = View.GONE
+                        Constant.AUTH = resource.data?.access_token ?: Constant.AUTH
+                        isAuth = true
+                        Toast.makeText(
+                            requireContext(),
+                            "Auth Success",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        getPetsFromLocal()
+                    }
+                    Status.ERROR -> {
+                        recyclerView.visibility = View.VISIBLE
+                        progressBar.visibility = View.GONE
+                        Toast.makeText(
+                            requireContext(),
+                            "Auth Fail",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                    Status.LOADING -> {
+                        progressBar.visibility = View.VISIBLE
+                        recyclerView.visibility = View.GONE
+                    }
+                }
+            }
+        })
+
+    }
     private fun setupUI() {
+        searchView.queryHint = "Search Pet By Type"
+
         toolbar.setOnMenuItemClickListener {
             onOptionsItemSelected(it)
         }
@@ -86,6 +128,21 @@ class MainFragment : Fragment() {
             )
         )
         recyclerView.adapter = adapter
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                //search pet
+                searchAnimalNetwork(query)
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+        })
+        btn_refresh.setOnClickListener {
+            getPetsFromNetwork()
+        }
     }
 
     private fun setupAdapterClickListener() {
@@ -99,10 +156,43 @@ class MainFragment : Fragment() {
                     bundle
                 )
             }
-
         })
     }
-    private fun getCoinsFromLocal() {
+
+    private fun searchAnimalNetwork(queryString: String) {
+        viewModel.findAnimalsByTypeNetwork(queryString).observe(requireActivity(), {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        recyclerView.visibility = View.VISIBLE
+                        progressBar.visibility = View.GONE
+                        Toast.makeText(
+                            requireContext(),
+                            "Find Pet From Network Success",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        resource.data?.let { res -> retrieveList(res.animals) }
+                    }
+                    Status.ERROR -> {
+                        recyclerView.visibility = View.VISIBLE
+                        progressBar.visibility = View.GONE
+                        Toast.makeText(
+                            requireContext(),
+                            "Find Pet From Network Fail",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                    Status.LOADING -> {
+                        progressBar.visibility = View.VISIBLE
+                        recyclerView.visibility = View.GONE
+                    }
+                }
+            }
+        })
+
+    }
+
+    private fun getPetsFromLocal() {
         viewModel.getAnimalLocal().observe(requireActivity(), {
             it?.let { resource ->
                 when (resource.status) {
@@ -111,7 +201,7 @@ class MainFragment : Fragment() {
                         progressBar.visibility = View.GONE
                         Toast.makeText(
                             requireContext(),
-                            "Get Data From Room Success",
+                            "Get Pet From Room Success",
                             Toast.LENGTH_LONG
                         ).show()
                         resource.data?.let { res -> retrieveList(res) }
@@ -121,13 +211,10 @@ class MainFragment : Fragment() {
                         progressBar.visibility = View.GONE
                         Toast.makeText(
                             requireContext(),
-                            "Get Data From Room Fail",
+                            "Get Pet From Room Fail",
                             Toast.LENGTH_LONG
                         ).show()
-                        Toast.makeText(requireContext(), "Get Data From NetWork", Toast.LENGTH_LONG)
-                            .show()
-
-                        getCoinsFromNetwork()
+                        getPetsFromNetwork()
 
                     }
                     Status.LOADING -> {
@@ -140,7 +227,7 @@ class MainFragment : Fragment() {
 
     }
 
-    private fun getCoinsFromNetwork() {
+    private fun getPetsFromNetwork() {
         viewModel.getAnimalsNetwork().observe(requireActivity(), {
             it?.let { resource ->
                 when (resource.status) {
@@ -149,7 +236,7 @@ class MainFragment : Fragment() {
                         progressBar.visibility = View.GONE
                         Toast.makeText(
                             requireContext(),
-                            "Get Data From Network Success",
+                            "Get Pet From Network Success",
                             Toast.LENGTH_LONG
                         ).show()
                         resource.data?.let { res -> retrieveListFromNetwork(res.animals) }
@@ -158,6 +245,11 @@ class MainFragment : Fragment() {
                         recyclerView.visibility = View.VISIBLE
                         progressBar.visibility = View.GONE
                         Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            requireContext(),
+                            "Get Pet From Network Fail",
+                            Toast.LENGTH_LONG
+                        ).show()
                         Log.e("MYHA", it.message.toString())
                     }
                     Status.LOADING -> {
@@ -171,7 +263,7 @@ class MainFragment : Fragment() {
 
     private fun retrieveList(animals: List<Animal>) {
         if(animals.isEmpty())
-            getCoinsFromNetwork()
+            getPetsFromNetwork()
         else
         {
             adapter.apply {
@@ -182,22 +274,26 @@ class MainFragment : Fragment() {
     }
 
     private fun retrieveListFromNetwork(animals: List<Animal>) {
-
         viewModel.insertAllLocal(animals).observe(requireActivity(), {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
                         Toast.makeText(
                             requireContext(),
-                            "Get Animals Data From Network Success, Save Room",
+                            "Save Room Success",
                             Toast.LENGTH_LONG
                         ).show()
-                        getCoinsFromLocal()
+                        getPetsFromLocal()
                     }
                     Status.ERROR -> {
-                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            requireContext(),
+                            "Save Room Fail",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
-                    else -> Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                    else -> {
+                    }
                 }
             }
         })
