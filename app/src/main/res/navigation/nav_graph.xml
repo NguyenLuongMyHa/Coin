@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/coinDetailFragment"
-        android:name="com.myha.coin.ui.main.view.CoinDetailFragment"
+        android:name="com.myha.coin.ui.main.view.AnimalDetailFragment"
         android:label="fragment_coin_detail"
         tools:layout="@layout/fragment_coin_detail">
         <action
@@ -34,7 +34,7 @@
     </fragment>
     <fragment
         android:id="@+id/newCoinFragment"
-        android:name="com.myha.coin.ui.main.view.NewCoinFragment"
+        android:name="com.myha.coin.ui.main.view.NewAnimalFragment"
         android:label="fragment_new_coin"
         tools:layout="@layout/fragment_new_coin" >
         <action
