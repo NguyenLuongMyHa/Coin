@@ -68,11 +68,11 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.3.0-alpha07"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
 
-    implementation "androidx.work:work-runtime-ktx:2.4.0"
-    implementation "androidx.room:room-ktx:2.2.5"
-    implementation "androidx.room:room-runtime:2.2.5"
-    kapt "androidx.room:room-compiler:2.2.5"
+    implementation "androidx.room:room-runtime:2.3.0-alpha02"
+    implementation "androidx.room:room-ktx:2.3.0-alpha02"
+    kapt "androidx.room:room-compiler:2.3.0-alpha02"
 
+    implementation "androidx.work:work-runtime-ktx:2.4.0"
     implementation "androidx.paging:paging-runtime:3.0.0-alpha06"
 
     implementation "com.google.code.gson:gson:2.8.6"

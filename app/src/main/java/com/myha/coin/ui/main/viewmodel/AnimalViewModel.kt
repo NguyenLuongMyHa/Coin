@@ -12,6 +12,10 @@ import com.myha.coin.utils.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import androidx.paging.map
+import kotlinx.coroutines.flow.map
+
+
 @ExperimentalCoroutinesApi
 class AnimalViewModel(private val animalRepository: AnimalRepository) : ViewModel() {
     private var currentQueryValue: String? = null
@@ -39,6 +43,7 @@ class AnimalViewModel(private val animalRepository: AnimalRepository) : ViewMode
             }
             currentQueryValue = queryString
             val newResult: Flow<PagingData<Animal>> = animalRepository.getSearchResultStream(queryString)
+                .map { pagingData -> pagingData.map { it} }
                 .cachedIn(viewModelScope)
             currentSearchResult = newResult
             emit(Resource.success(data = newResult))

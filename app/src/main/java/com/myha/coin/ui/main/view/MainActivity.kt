@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
                         progressBar.visibility = View.GONE
                         Constant.AUTH = resource.data?.access_token ?: Constant.AUTH
                         isAuth = true
-                        Log.i("PetFinder", "Auth Success")
+                        Log.i("PetFinder", "Auth Success ".plus(Constant.AUTH))
                     }
                     Status.ERROR -> {
                         recyclerView.visibility = View.VISIBLE

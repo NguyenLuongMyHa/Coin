@@ -1,11 +1,14 @@
 package com.myha.coin.ui.main.view
 
+import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -20,6 +23,7 @@ import com.myha.coin.data.api.RetrofitBuilder
 import com.myha.coin.data.db.AnimalDatabase
 import com.myha.coin.data.model.Animal
 import com.myha.coin.ui.base.AnimalVMFactory
+import com.myha.coin.ui.main.adapter.AnimalLoadStateAdapter
 import com.myha.coin.ui.main.adapter.AnimalPagerAdapter
 import com.myha.coin.ui.main.viewmodel.AnimalViewModel
 import com.myha.coin.utils.Status
@@ -67,6 +71,7 @@ class MainFragment : Fragment() {
         navController = Navigation.findNavController(view)
         setupViewModel()
         setupUI()
+        initAdapter()
         setupAdapterClickListener()
         val query = savedInstanceState?.getString(LAST_SEARCH_QUERY) ?: DEFAULT_QUERY
         search(query)
@@ -98,13 +103,6 @@ class MainFragment : Fragment() {
                 )
             )
         )[AnimalViewModel::class.java]
-//        viewModel = ViewModelProvider(
-//            this, AnimalVMFactory(
-//                ApiHelper(RetrofitBuilder.apiService), AnimalDatabase.getInstance(
-//                    requireContext()
-//                )
-//            )
-//        ).get(AnimalViewModel::class.java)
     }
 
     private fun setupUI() {
@@ -121,13 +119,20 @@ class MainFragment : Fragment() {
                 (recyclerView.layoutManager as LinearLayoutManager).orientation
             )
         )
-        recyclerView.adapter = adapterPaging
+//        recyclerView.adapter = adapterPaging
+
         btn_refresh.setOnClickListener {
             search("")
             it.startAnimation(rotateAnimation)
         }
     }
 
+    private fun initAdapter() {
+        recyclerView.adapter = adapterPaging.withLoadStateHeaderAndFooter(
+            header = AnimalLoadStateAdapter { adapterPaging.retry() },
+            footer = AnimalLoadStateAdapter { adapterPaging.retry() }
+        )
+    }
     private fun search(query: String) {
         btn_refresh.startAnimation(rotateAnimation)
         searchJob?.cancel()

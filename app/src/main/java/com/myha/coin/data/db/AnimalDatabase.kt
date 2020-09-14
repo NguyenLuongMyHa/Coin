@@ -7,15 +7,17 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.myha.coin.data.model.Animal
 import com.myha.coin.data.model.PhotoConverter
+import com.myha.coin.data.model.RemoteKeys
 
 @Database(
-    entities = [Animal::class],
+    entities = [Animal::class, RemoteKeys::class],
     version = 1,
     exportSchema = false
 )
 @TypeConverters(PhotoConverter::class)
 abstract class AnimalDatabase : RoomDatabase() {
     abstract fun animalsDao(): AnimalDao
+    abstract fun remoteKeysDao(): RemoteKeysDao
 
     companion object {
         @Volatile
