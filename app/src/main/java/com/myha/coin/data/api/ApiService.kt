@@ -16,7 +16,7 @@ interface ApiService {
 
     @GET("animals")
     suspend fun getAnimals(@Header("Authorization") authorization: String,
-                           @Query("q") query: String = "",
+                           @Query("type") query: String,
                            @Query("page") page: Int = 1): AnimalResponse
     @GET("animals")
     suspend fun findAnimalsByType(

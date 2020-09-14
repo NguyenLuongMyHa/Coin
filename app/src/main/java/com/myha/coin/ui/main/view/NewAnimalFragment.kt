@@ -19,8 +19,9 @@ import com.myha.coin.ui.base.AnimalVMFactory
 import com.myha.coin.ui.main.viewmodel.AnimalViewModel
 import com.myha.coin.utils.Status
 import kotlinx.android.synthetic.main.fragment_new_coin.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-
+@ExperimentalCoroutinesApi
 class NewAnimalFragment : Fragment() {
     private lateinit var viewModel: AnimalViewModel
     private var navController: NavController? = null

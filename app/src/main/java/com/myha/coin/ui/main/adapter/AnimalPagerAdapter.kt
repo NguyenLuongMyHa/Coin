@@ -1,5 +1,7 @@
 package com.myha.coin.ui.main.adapter
 
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,11 +14,19 @@ import com.myha.coin.data.model.Animal
 import kotlinx.android.synthetic.main.item_animal.view.*
 
 class AnimalPagerAdapter : PagingDataAdapter<Animal, RecyclerView.ViewHolder> (COMPARATOR) {
+    private lateinit var mItemCLicked: AnimalPagerAdapter.ItemCLickedListener
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val animal = getItem(position)
         if (animal != null) {
             (holder as AnimalViewHolder).bind(animal)
+        }
+        (holder as AnimalViewHolder).itemView.setOnClickListener {
+            mItemCLicked.let {
+                if (animal != null) {
+                    mItemCLicked.onItemClicked(animal)
+                }
+            }
         }
     }
 
@@ -33,11 +43,15 @@ class AnimalPagerAdapter : PagingDataAdapter<Animal, RecyclerView.ViewHolder> (C
         }
     }
     class AnimalViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        private var animal: Animal? = null
+
         fun bind(animal: Animal?) {
             if(animal == null) {
                 val resources = itemView.resources
             }
             else {
+                this.animal = animal
+
                 if(animal.photos?.size != 0)
                     Glide.with(itemView.context).load(animal.photos?.get(0)?.fullsize).into(itemView.img_animal)
                 else
@@ -60,5 +74,11 @@ class AnimalPagerAdapter : PagingDataAdapter<Animal, RecyclerView.ViewHolder> (C
                 return AnimalViewHolder(view)
             }
         }
+    }
+    interface ItemCLickedListener {
+        fun onItemClicked(animal: Animal)
+    }
+    fun setUpListener(itemCLicked: ItemCLickedListener){
+        mItemCLicked = itemCLicked
     }
 }

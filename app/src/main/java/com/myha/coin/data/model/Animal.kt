@@ -31,8 +31,7 @@ data class Animal(
     var photos: List<Photo>? = null,
     @Embedded @field:SerializedName("contact")
     var contact: Contact? = null
-) : Serializable {
-}
+) : Serializable
 
 class PhotoConverter : Serializable {
     @TypeConverter

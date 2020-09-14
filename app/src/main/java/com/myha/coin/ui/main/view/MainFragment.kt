@@ -1,15 +1,17 @@
 package com.myha.coin.ui.main.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
-import android.widget.Toast
+import android.view.animation.Animation
+import android.view.animation.RotateAnimation
 import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.myha.coin.R
@@ -18,23 +20,42 @@ import com.myha.coin.data.api.RetrofitBuilder
 import com.myha.coin.data.db.AnimalDatabase
 import com.myha.coin.data.model.Animal
 import com.myha.coin.ui.base.AnimalVMFactory
-import com.myha.coin.ui.main.adapter.AnimalAdapter
+import com.myha.coin.ui.main.adapter.AnimalPagerAdapter
 import com.myha.coin.ui.main.viewmodel.AnimalViewModel
-import com.myha.coin.utils.Constant
 import com.myha.coin.utils.Status
 import kotlinx.android.synthetic.main.fragment_main.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 
+
+@ExperimentalCoroutinesApi
 class MainFragment : Fragment() {
     private lateinit var viewModel: AnimalViewModel
-    private lateinit var adapter: AnimalAdapter
+    private val adapterPaging = AnimalPagerAdapter()
+    private var searchJob: Job? = null
     var navController: NavController? = null
-    private var isAuth = false
+    val rotateAnimation = RotateAnimation(
+        0F,
+        359F,
+        Animation.RELATIVE_TO_SELF,
+        0.5f,
+        Animation.RELATIVE_TO_SELF,
+        0.5f
+    )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setupViewModel()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_main, container, false)
         setHasOptionsMenu(true)
         return view
@@ -44,18 +65,19 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
+        setupViewModel()
         setupUI()
-        if(!isAuth)
-            getApiToken()
-        else
-            getPetsFromLocal()
         setupAdapterClickListener()
+        val query = savedInstanceState?.getString(LAST_SEARCH_QUERY) ?: DEFAULT_QUERY
+        search(query)
+        initSearch(query)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_main, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_item_add -> {
@@ -66,6 +88,7 @@ class MainFragment : Fragment() {
         }
         return false
     }
+
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
             this,
@@ -75,78 +98,106 @@ class MainFragment : Fragment() {
                 )
             )
         )[AnimalViewModel::class.java]
-
+//        viewModel = ViewModelProvider(
+//            this, AnimalVMFactory(
+//                ApiHelper(RetrofitBuilder.apiService), AnimalDatabase.getInstance(
+//                    requireContext()
+//                )
+//            )
+//        ).get(AnimalViewModel::class.java)
     }
 
-    private fun getApiToken() {
-        viewModel.getToken().observe(requireActivity(), {
-            it?.let { resource ->
-                when (resource.status) {
-                    Status.SUCCESS -> {
-                        recyclerView.visibility = View.VISIBLE
-                        progressBar.visibility = View.GONE
-                        Constant.AUTH = resource.data?.access_token ?: Constant.AUTH
-                        isAuth = true
-                        Toast.makeText(
-                            requireContext(),
-                            "Auth Success",
-                            Toast.LENGTH_LONG
-                        ).show()
-                        getPetsFromLocal()
-                    }
-                    Status.ERROR -> {
-                        recyclerView.visibility = View.VISIBLE
-                        progressBar.visibility = View.GONE
-                        Toast.makeText(
-                            requireContext(),
-                            "Auth Fail",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                    Status.LOADING -> {
-                        progressBar.visibility = View.VISIBLE
-                        recyclerView.visibility = View.GONE
-                    }
-                }
-            }
-        })
-
-    }
     private fun setupUI() {
-        searchView.queryHint = "Search Pet By Type"
+        rotateAnimation.setDuration(1000)
 
         toolbar.setOnMenuItemClickListener {
             onOptionsItemSelected(it)
         }
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        adapter = AnimalAdapter(arrayListOf())
         recyclerView.addItemDecoration(
             DividerItemDecoration(
                 recyclerView.context,
                 (recyclerView.layoutManager as LinearLayoutManager).orientation
             )
         )
-        recyclerView.adapter = adapter
+        recyclerView.adapter = adapterPaging
+        btn_refresh.setOnClickListener {
+            search("")
+            it.startAnimation(rotateAnimation)
+        }
+    }
+
+    private fun search(query: String) {
+        btn_refresh.startAnimation(rotateAnimation)
+        searchJob?.cancel()
+        searchJob = lifecycleScope.launch {
+            viewModel.searchAnimal(query).observe(requireActivity(), {
+                it?.let { resource ->
+                    when (resource.status) {
+                        Status.SUCCESS -> {
+                            recyclerView.visibility = View.VISIBLE
+                            progressBar.visibility = View.GONE
+                            lifecycleScope.launch {
+                                resource.data?.collectLatest {
+                                    adapterPaging.submitData(
+                                        it
+                                    )
+                                }
+                            }
+                        }
+                        Status.ERROR -> {
+                            recyclerView.visibility = View.VISIBLE
+                            progressBar.visibility = View.GONE
+                        }
+                        Status.LOADING -> {
+                            progressBar.visibility = View.VISIBLE
+                            recyclerView.visibility = View.GONE
+                        }
+                    }
+                }
+            })
+
+        }
+
+
+    }
+
+    private fun initSearch(query: String) {
+        searchView.setQuery(query, false)
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                //search pet
-                searchAnimalNetwork(query)
+            override fun onQueryTextChange(newText: String): Boolean {
                 return false
             }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                updateAnimalListFromInput()
                 return false
             }
         })
-        btn_refresh.setOnClickListener {
-            getPetsFromNetwork()
+
+        // Scroll to top when the list is refreshed from network.
+        lifecycleScope.launch {
+            adapterPaging.loadStateFlow
+                // Only emit when REFRESH LoadState for RemoteMediator changes.
+                .distinctUntilChangedBy { it.refresh }
+                // Only react to cases where Remote REFRESH completes i.e., NotLoading.
+                .filter { it.refresh is LoadState.NotLoading }
+                .collect { recyclerView.scrollToPosition(0) }
+        }
+    }
+
+    private fun updateAnimalListFromInput() {
+        searchView.query.trim().let {
+            if (it.isNotEmpty()) {
+                search(it.toString())
+            }
         }
     }
 
     private fun setupAdapterClickListener() {
-        adapter.setUpListener(object : AnimalAdapter.ItemCLickedListener {
+        adapterPaging.setUpListener(object : AnimalPagerAdapter.ItemCLickedListener {
             override fun onItemClicked(animal: Animal) {
                 val bundle = bundleOf(
                     "animal" to animal
@@ -158,6 +209,14 @@ class MainFragment : Fragment() {
             }
         })
     }
+
+    companion object {
+        private const val LAST_SEARCH_QUERY: String = "last_search_query"
+        private const val DEFAULT_QUERY = ""
+    }
+}
+
+/*
 
     private fun searchAnimalNetwork(queryString: String) {
         viewModel.findAnimalsByTypeNetwork(queryString).observe(requireActivity(), {
@@ -262,15 +321,15 @@ class MainFragment : Fragment() {
     }
 
     private fun retrieveList(animals: List<Animal>) {
-        if(animals.isEmpty())
-            getPetsFromNetwork()
-        else
-        {
-            adapter.apply {
-                addAnimals(animals)
-                notifyDataSetChanged()
+            if(animals.isEmpty())
+                getPetsFromNetwork()
+            else
+            {
+//            adapter.apply {
+//                addAnimals(animals)
+//                notifyDataSetChanged()
+//            }
             }
-        }
     }
 
     private fun retrieveListFromNetwork(animals: List<Animal>) {
@@ -298,6 +357,4 @@ class MainFragment : Fragment() {
             }
         })
     }
-
-}
-
+     */

@@ -1,6 +1,5 @@
 package com.myha.coin.ui.main.viewmodel
 
-import android.app.DownloadManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
@@ -12,13 +11,14 @@ import com.myha.coin.data.repository.AnimalRepository
 import com.myha.coin.utils.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+@ExperimentalCoroutinesApi
 class AnimalViewModel(private val animalRepository: AnimalRepository) : ViewModel() {
     private var currentQueryValue: String? = null
 
     private var currentSearchResult: Flow<PagingData<Animal>>? = null
 
-    fun searchAnimal(queryString: String): Flow<PagingData<Animal>> {
+    fun searchAnimal2(queryString: String = ""): Flow<PagingData<Animal>> {
         val lastResult = currentSearchResult
         if (queryString == currentQueryValue && lastResult != null) {
             return lastResult
@@ -29,6 +29,24 @@ class AnimalViewModel(private val animalRepository: AnimalRepository) : ViewMode
         currentSearchResult = newResult
         return newResult
     }
+
+    fun searchAnimal(queryString: String = "") = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            val lastResult = currentSearchResult
+            if (queryString == currentQueryValue && lastResult != null) {
+                emit(Resource.success(data = lastResult))
+            }
+            currentQueryValue = queryString
+            val newResult: Flow<PagingData<Animal>> = animalRepository.getSearchResultStream(queryString)
+                .cachedIn(viewModelScope)
+            currentSearchResult = newResult
+            emit(Resource.success(data = newResult))
+        } catch (exception: Exception) {
+            emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+
 
     fun getToken() = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
