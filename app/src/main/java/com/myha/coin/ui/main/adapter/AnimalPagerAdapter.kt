@@ -1,7 +1,5 @@
 package com.myha.coin.ui.main.adapter
 
-import android.content.Intent
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +31,7 @@ class AnimalPagerAdapter : PagingDataAdapter<Animal, RecyclerView.ViewHolder> (C
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return AnimalViewHolder.create(parent)
     }
+
     companion object {
         private val COMPARATOR = object : DiffUtil.ItemCallback<Animal>() {
             override fun areItemsTheSame(oldItem: Animal, newItem: Animal): Boolean =
@@ -42,6 +41,7 @@ class AnimalPagerAdapter : PagingDataAdapter<Animal, RecyclerView.ViewHolder> (C
                 oldItem == newItem
         }
     }
+
     class AnimalViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private var animal: Animal? = null
 
@@ -58,7 +58,6 @@ class AnimalPagerAdapter : PagingDataAdapter<Animal, RecyclerView.ViewHolder> (C
                     Glide.with(itemView.context).load(R.drawable.ic_image)
                         .into(itemView.img_animal);
                 itemView.apply {
-                    //set text
                     tv_age.text = animal.age
                     tv_gender.text = animal.gender
                     tv_name.text = animal.name

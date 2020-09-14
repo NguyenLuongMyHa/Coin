@@ -34,7 +34,7 @@ class AnimalViewModel(private val animalRepository: AnimalRepository) : ViewMode
         return newResult
     }
 
-    fun searchAnimal(queryString: String = "") = liveData(Dispatchers.IO) {
+    fun searchAnimal(queryString: String) = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
         try {
             val lastResult = currentSearchResult
@@ -43,7 +43,7 @@ class AnimalViewModel(private val animalRepository: AnimalRepository) : ViewMode
             }
             currentQueryValue = queryString
             val newResult: Flow<PagingData<Animal>> = animalRepository.getSearchResultStream(queryString)
-                .map { pagingData -> pagingData.map { it} }
+//                .map { pagingData -> pagingData.map { it} }
                 .cachedIn(viewModelScope)
             currentSearchResult = newResult
             emit(Resource.success(data = newResult))

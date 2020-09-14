@@ -1,14 +1,15 @@
 package com.myha.coin.data.db
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import com.bumptech.glide.load.HttpException
 import com.myha.coin.data.api.ApiHelper
 import com.myha.coin.data.model.Animal
 import com.myha.coin.data.model.RemoteKeys
+import retrofit2.HttpException
 import java.io.IOException
 import java.io.InvalidObjectException
 
@@ -23,19 +24,22 @@ class AnimalRemoteMediator(
         val page = when (loadType) {
             LoadType.REFRESH -> {
                 val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
-                if(remoteKeys!= null && remoteKeys.nextKey!! >= 2)
-                    remoteKeys.nextKey.minus(1)
-                else
-                    1
+                remoteKeys?.nextKey?.minus(1) ?: 1
             }
             LoadType.PREPEND -> {
                 val remoteKeys = getRemoteKeyForFirstItem(state)
-                    ?: throw InvalidObjectException("Remote key and the prevKey should not be null")
-                remoteKeys.prevKey ?: return MediatorResult.Success(endOfPaginationReached = false)
+                if (remoteKeys == null) {
+                    throw InvalidObjectException("Remote key and the prevKey should not be null")
+                }
+                val prevKey = remoteKeys.prevKey
+                if (prevKey == null) {
+                    return MediatorResult.Success(endOfPaginationReached = true)
+                }
+                remoteKeys.prevKey
             }
             LoadType.APPEND -> {
                 val remoteKeys = getRemoteKeyForLastItem(state)
-                if (remoteKeys?.nextKey == null) {
+                if (remoteKeys == null || remoteKeys.nextKey == null) {
                     throw InvalidObjectException("Remote key should not be null for $loadType")
                 }
                 remoteKeys.nextKey
@@ -56,6 +60,9 @@ class AnimalRemoteMediator(
                 }
                 val prevKey = if (page == 1) null else page - 1
                 val nextKey = if (endOfPaginationReached) null else page + 1
+                Log.i("PetFinder - prev", prevKey.toString())
+                Log.i("PetFinder - next", nextKey.toString())
+
                 val keys = animals.map {
                     RemoteKeys(animalId = it.id, prevKey = prevKey, nextKey = nextKey)
                 }

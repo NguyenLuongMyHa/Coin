@@ -1,14 +1,11 @@
 package com.myha.coin.ui.main.view
 
-import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
-import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -43,7 +40,7 @@ class MainFragment : Fragment() {
     private val adapterPaging = AnimalPagerAdapter()
     private var searchJob: Job? = null
     var navController: NavController? = null
-    val rotateAnimation = RotateAnimation(
+    private val rotateAnimation = RotateAnimation(
         0F,
         359F,
         Animation.RELATIVE_TO_SELF,
@@ -106,7 +103,7 @@ class MainFragment : Fragment() {
     }
 
     private fun setupUI() {
-        rotateAnimation.setDuration(1000)
+        rotateAnimation.duration = 1000
 
         toolbar.setOnMenuItemClickListener {
             onOptionsItemSelected(it)
