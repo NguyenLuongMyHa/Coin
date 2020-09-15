@@ -46,10 +46,7 @@ class AnimalPagerAdapter : PagingDataAdapter<Animal, RecyclerView.ViewHolder> (C
         private var animal: Animal? = null
 
         fun bind(animal: Animal?) {
-            if(animal == null) {
-                val resources = itemView.resources
-            }
-            else {
+            if(animal!=null) {
                 this.animal = animal
 
                 if(animal.photos?.size != 0)

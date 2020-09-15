@@ -26,7 +26,7 @@ abstract class AnimalDatabase : RoomDatabase() {
             INSTANCE ?: buildDatabase(context).also { INSTANCE = it }
         }
         private fun buildDatabase(context: Context) = Room.databaseBuilder(
-            context,
+            context.applicationContext,
             AnimalDatabase::class.java,"Animal.db")
             .build()
     }

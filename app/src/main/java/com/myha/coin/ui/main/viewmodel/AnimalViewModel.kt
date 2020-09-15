@@ -22,13 +22,14 @@ class AnimalViewModel(private val animalRepository: AnimalRepository) : ViewMode
 
     private var currentSearchResult: Flow<PagingData<Animal>>? = null
 
-    fun searchAnimal2(queryString: String = ""): Flow<PagingData<Animal>> {
+    fun searchAnimal2(queryString: String): Flow<PagingData<Animal>> {
         val lastResult = currentSearchResult
         if (queryString == currentQueryValue && lastResult != null) {
             return lastResult
         }
         currentQueryValue = queryString
         val newResult: Flow<PagingData<Animal>> = animalRepository.getSearchResultStream(queryString)
+//            .map { pagingData -> pagingData.map { it } }
             .cachedIn(viewModelScope)
         currentSearchResult = newResult
         return newResult
@@ -65,7 +66,7 @@ class AnimalViewModel(private val animalRepository: AnimalRepository) : ViewMode
     fun getAnimalsNetwork() = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
         try {
-            emit(Resource.success(data = animalRepository.getAnimalsNetwork()))
+            //emit(Resource.success(data = animalRepository.getAnimalsNetwork()))
         } catch (exception: Exception) {
             emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
         }

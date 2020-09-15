@@ -11,12 +11,12 @@ import com.myha.coin.R
 import kotlinx.android.synthetic.main.item_footer.view.*
 
 class AnimalLoadStateAdapter(private val retry: () -> Unit) : LoadStateAdapter<AnimalLoadStateAdapter.AnimalLoadStateViewHolder>() {
-    override fun onBindViewHolder(holder: AnimalLoadStateViewHolder, loadState: LoadState) {
+    override fun onBindViewHolder(holder: AnimalLoadStateAdapter.AnimalLoadStateViewHolder, loadState: LoadState) {
         holder.bind(loadState)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState): AnimalLoadStateViewHolder {
-        return AnimalLoadStateViewHolder.create(parent, retry)
+    override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState): AnimalLoadStateAdapter.AnimalLoadStateViewHolder {
+        return AnimalLoadStateAdapter.AnimalLoadStateViewHolder.create(parent, retry)
     }
 
     class AnimalLoadStateViewHolder(

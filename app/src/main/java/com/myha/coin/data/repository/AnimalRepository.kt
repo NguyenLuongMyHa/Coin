@@ -13,8 +13,7 @@ import kotlinx.coroutines.flow.Flow
 
 class AnimalRepository(private val apiHelper: ApiHelper, private val database: AnimalDatabase) {
     fun getSearchResultStream(query: String): Flow<PagingData<Animal>> {
-        Log.d("AnimalRepository", "New query: $query")
-        val dbQuery = "%${query.replace(' ', '%')}%"
+        Log.d("PetFinder", "New query: $query")
         val pagingSourceFactory = { database.animalsDao().getAnimalPagingSource()}
 
         return Pager(
@@ -27,9 +26,8 @@ class AnimalRepository(private val apiHelper: ApiHelper, private val database: A
             pagingSourceFactory = pagingSourceFactory
         ).flow
     }
-
     suspend fun getToken() = apiHelper.getToken()
-    suspend fun getAnimalsNetwork() = apiHelper.getAnimals()
+//    suspend fun getAnimalsNetwork() = apiHelper.getAnimals()
     suspend fun findAnimalsByTypeNetwork(queryString: String) = apiHelper.findAnimalsByType(queryString)
 
     suspend fun getAnimalLocal() = database.animalsDao().getAnimals()

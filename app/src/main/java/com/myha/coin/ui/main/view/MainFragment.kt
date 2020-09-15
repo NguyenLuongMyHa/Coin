@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -90,6 +92,11 @@ class MainFragment : Fragment() {
         }
         return false
     }
+//
+//    override fun onSaveInstanceState(outState: Bundle) {
+//        super.onSaveInstanceState(outState)
+//        outState.putString(LAST_SEARCH_QUERY, searchView.query.trim().toString())
+//    }
 
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
@@ -116,10 +123,10 @@ class MainFragment : Fragment() {
                 (recyclerView.layoutManager as LinearLayoutManager).orientation
             )
         )
-//        recyclerView.adapter = adapterPaging
 
         btn_refresh.setOnClickListener {
-            search("")
+            //search("")
+            updateAnimalListFromInput()
             it.startAnimation(rotateAnimation)
         }
     }
@@ -129,40 +136,35 @@ class MainFragment : Fragment() {
             header = AnimalLoadStateAdapter { adapterPaging.retry() },
             footer = AnimalLoadStateAdapter { adapterPaging.retry() }
         )
+//        adapterPaging.addLoadStateListener { loadState ->
+//            // Only show the list if refresh succeeds.
+//            recyclerView.isVisible = loadState.source.refresh is LoadState.NotLoading
+//            // Show loading spinner during initial load or refresh.
+//            progressBar.isVisible = loadState.source.refresh is LoadState.Loading
+//
+//            // Toast on any error, regardless of whether it came from RemoteMediator or PagingSource
+//            val errorState = loadState.source.append as? LoadState.Error
+//                ?: loadState.source.prepend as? LoadState.Error
+//                ?: loadState.append as? LoadState.Error
+//                ?: loadState.prepend as? LoadState.Error
+//            errorState?.let {
+//                Toast.makeText(
+//                    requireContext(),
+//                    "\uD83D\uDE28 Wooops ${it.error}",
+//                    Toast.LENGTH_LONG
+//                ).show()
+//            }
+//        }
     }
+
     private fun search(query: String) {
-        btn_refresh.startAnimation(rotateAnimation)
+        // cancel the previous job before creating a new one
         searchJob?.cancel()
         searchJob = lifecycleScope.launch {
-            viewModel.searchAnimal(query).observe(requireActivity(), {
-                it?.let { resource ->
-                    when (resource.status) {
-                        Status.SUCCESS -> {
-                            recyclerView.visibility = View.VISIBLE
-                            progressBar.visibility = View.GONE
-                            lifecycleScope.launch {
-                                resource.data?.collectLatest {
-                                    adapterPaging.submitData(
-                                        it
-                                    )
-                                }
-                            }
-                        }
-                        Status.ERROR -> {
-                            recyclerView.visibility = View.VISIBLE
-                            progressBar.visibility = View.GONE
-                        }
-                        Status.LOADING -> {
-                            progressBar.visibility = View.VISIBLE
-                            recyclerView.visibility = View.GONE
-                        }
-                    }
-                }
-            })
-
+            viewModel.searchAnimal2(query).collectLatest {
+                adapterPaging.submitData(it)
+            }
         }
-
-
     }
 
     private fun initSearch(query: String) {
@@ -359,4 +361,40 @@ class MainFragment : Fragment() {
             }
         })
     }
+
+
+    private fun search2(query: String) {
+        btn_refresh.startAnimation(rotateAnimation)
+        searchJob?.cancel()
+        searchJob = lifecycleScope.launch {
+            viewModel.searchAnimal(query).observe(requireActivity(), {
+                it?.let { resource ->
+                    when (resource.status) {
+                        Status.SUCCESS -> {
+                            recyclerView.visibility = View.VISIBLE
+                            progressBar.visibility = View.GONE
+                            lifecycleScope.launch {
+                                resource.data?.collectLatest {
+                                    adapterPaging.submitData(it)
+                                }
+                            }
+                        }
+                        Status.ERROR -> {
+                            recyclerView.visibility = View.VISIBLE
+                            progressBar.visibility = View.GONE
+                        }
+                        Status.LOADING -> {
+                            progressBar.visibility = View.VISIBLE
+                            recyclerView.visibility = View.GONE
+                        }
+                    }
+                }
+            })
+
+        }
+
+
+    }
+
+
      */

@@ -24,6 +24,7 @@ interface AnimalDao {
     @Query("SELECT * FROM animals ORDER BY id ASC")
     fun getAnimalPagingSource(): PagingSource<Int, Animal>
 
+
     @Update
     suspend fun update(animal: Animal)
 

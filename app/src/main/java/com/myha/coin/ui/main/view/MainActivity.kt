@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                     Status.ERROR -> {
                         recyclerView.visibility = View.VISIBLE
                         progressBar.visibility = View.GONE
-                        Log.i("PetFinder", "Auth Fail")
+                        Log.i("PetFinder", "Auth Fail ".plus(resource.message))
                     }
                     Status.LOADING -> {
                         progressBar.visibility = View.VISIBLE
